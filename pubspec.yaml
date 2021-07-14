@@ -22,7 +22,7 @@ environment:
 
 dependencies:
   flappy_search_bar: 1.4.1
-  http: ^0.12.0+2
+  http: 0.13.3
   flutter:
     sdk: flutter
 

@@ -3,14 +3,16 @@ class Contacts {
   final String firstname;
   final String phonenumbers;
 
-  Contacts({required this.lastname, required this.firstname, required this.phonenumbers});
+  Contacts(
+      {required this.lastname,
+      required this.firstname,
+      required this.phonenumbers});
 
-  factory Contacts.fromJson(Map<String, dynamic> json)  {
+  factory Contacts.fromJson(Map<String, dynamic> json) {
     return Contacts(
-    lastname : json['lastname'],
-    firstname : json['firstname'],
-    phonenumbers : json['phonenumbers']
-    );
+        lastname: json['lastname'],
+        firstname: json['firstname'],
+        phonenumbers: json['phonenumbers']);
   }
 
   Map<String, dynamic> toJson() {
