@@ -130,9 +130,34 @@ class _ViewContactState extends State<ViewContact> {
       key: UniqueKey(),
       onDismissed: (direction) {
         dialogs.information(context, "Are you sure you want to delete?");
-        deleteContact(id.toString());
-      },
+        //deleteContact(id.toString());
+      
+        information (BuildContext context, String message) {
+        return showDialog(
+          context: context,
+          barrierDismissible: true,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: Text(message),
+              actions: <Widget>[
+                FlatButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    contacts.removeAt(item["_id"]);
+                    deleteContact(item["_id"].toString());
+                  },
+                  child: Text("Yes"),
+                ),
+                FlatButton(
+                    onPressed: () => Navigator.pop(context), child: Text("No"))
+              ],
+            );
+          },
+        );
+       }
+    },
       child: Card(
+        color: Colors.red[200],
           child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: ListTile(
@@ -146,17 +171,19 @@ class _ViewContactState extends State<ViewContact> {
             ),
             title: Row(
               children: <Widget>[
-                SizedBox(width: 20),
                 Column(children: <Widget>[
                   Container(
+                    padding: EdgeInsets.only(top: 15),
                     child: Text(
                       firstname + " " + lastname,
                       style: TextStyle(fontSize: 17, color: Colors.black),
                     ),
                     width: 200,
-                    height: 20,
+                    height: 35,
                   ),
+                  SizedBox(height: 10),
                   Container(
+                    padding: EdgeInsets.only(top: 2),
                     child: Text(
                       "Contact #: \n" + nums.toString() + "\n",
                       style: TextStyle(fontSize: 12.5, color: Colors.blueGrey),
@@ -167,6 +194,31 @@ class _ViewContactState extends State<ViewContact> {
               ],
             )),
       )),
+    );
+    
+  }
+}
+class Dialogue {
+  information(BuildContext context, String message) {
+    return showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text(message),
+          actions: <Widget>[
+            FlatButton(
+              onPressed: () {
+                Navigator.pop(context);
+                deleteContact("_id".toString());
+              },
+              child: Text("Yes"),
+            ),
+            FlatButton(
+                onPressed: () => Navigator.pop(context), child: Text("No"))
+          ],
+        );
+      },
     );
   }
 }
