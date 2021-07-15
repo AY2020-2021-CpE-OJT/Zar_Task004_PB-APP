@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_mobileapp/ContactList.dart';
 import 'package:flutter_mobileapp/Model/data_model.dart';
 import '../API.dart';
 
@@ -29,9 +30,6 @@ class _NewContactState extends State<NewContact> {
       phonenum.add(_phonenumbers[i].text);
     }
     setState(() {
-      final fname = _firstname.text;
-      final lname = _lastname.text;
-      final pnum = _phonenumbers.length > 11;
       _list.insert(0, Todo(_lastname.text, _firstname.text, phonenum));
       _futureContacts =
           createContact(_lastname.text, _firstname.text, phonenum);

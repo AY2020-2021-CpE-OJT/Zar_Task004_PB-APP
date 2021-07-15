@@ -8,6 +8,7 @@ import './Model/data_model.dart';
 import './Contact/newContact.dart';
 import './Contact/searchList.dart';
 import 'API.dart';
+import 'Dialogue.dart';
 
 class ViewContact extends StatefulWidget {
   @override
@@ -19,6 +20,7 @@ Random random = new Random();
 int limit = random.nextInt(10);
 
 class _ViewContactState extends State<ViewContact> {
+  Dialogue dialogs = new Dialogue();
   late Future<Contacts> futureContacts;
   List contacts = [];
   bool isLoading = false;
@@ -37,8 +39,7 @@ class _ViewContactState extends State<ViewContact> {
     });
 
     if (res.statusCode == 200) {
-      var items = json.decode(res.body);
-      //print(items);
+      List items = json.decode(res.body);
       setState(() {
         contacts = items;
       });
@@ -83,19 +84,18 @@ class _ViewContactState extends State<ViewContact> {
 
   Future<void> refreshList() async {
     keyRefresh.currentState?.show(atTop: true);
-    await Future.delayed(Duration(seconds: 0));
+    await Future.delayed(Duration(milliseconds: 0));
     setState(() {
       fetchUser();
     });
   }
 
   Widget getBody() {
+    Center(child: Icon(Icons.add));
     if (contacts.contains(null) || contacts.length <= 0 || isLoading) {
       return Center(
-          child: Text(
-        "Empty",
-        style: TextStyle(fontSize: 17, color: Colors.black),
-      ));
+          child: Text("Empty",
+              style: TextStyle(fontSize: 20, color: Colors.black)));
     }
     return ListView.builder(
         itemCount: contacts.length,
@@ -105,27 +105,32 @@ class _ViewContactState extends State<ViewContact> {
   }
 
   Widget getCard(item) {
-    var str = item["lastname"] + ", " + item["firstname"] + "\n";
-    String id = item["_id"];
-    final num = item['phonenumbers'];
-    var initalsName = item['firstname'].substring(0, 1).toUpperCase() +
-        item['lastname'].substring(0, 1).toUpperCase();
+    String firstname = item["firstname"].substring(0, 1).toUpperCase() +
+        item["firstname"].substring(1).toLowerCase();
+
     Color color =
         Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
-    Future<Contacts>? _futureContacts;
-    final List<Todo> _list = <Todo>[];
 
-    void _delete() {
-      setState(() {
-        _list.insert(0, Todo(id));
-        _futureContacts = deleteContact(id);
-      });
-    }
+    String lastname = item["lastname"].substring(0, 1).toUpperCase() +
+        item["lastname"].substring(1).toLowerCase();
+
+    var initalsName = item['firstname'].substring(0, 1).toUpperCase() +
+        item['lastname'].substring(0, 1).toUpperCase();
+
+    String id = item["_id"];
+    final nums = item['phonenumbers'];
+
+    // void _delete() {
+    //   setState(() {
+    //     deleteContact(id.toString());
+    //   });
+    // }
 
     return Dismissible(
-      key: ObjectKey(item["_id"]),
+      key: UniqueKey(),
       onDismissed: (direction) {
-        _delete();
+        dialogs.information(context, "Are you sure you want to delete?");
+        deleteContact(id.toString());
       },
       child: Card(
           child: Padding(
@@ -145,7 +150,7 @@ class _ViewContactState extends State<ViewContact> {
                 Column(children: <Widget>[
                   Container(
                     child: Text(
-                      str.toString(),
+                      firstname + " " + lastname,
                       style: TextStyle(fontSize: 17, color: Colors.black),
                     ),
                     width: 200,
@@ -153,7 +158,7 @@ class _ViewContactState extends State<ViewContact> {
                   ),
                   Container(
                     child: Text(
-                      "Contact #: \n" + num.toString() + "\n",
+                      "Contact #: \n" + nums.toString() + "\n",
                       style: TextStyle(fontSize: 12.5, color: Colors.blueGrey),
                     ),
                     width: 200,
@@ -164,9 +169,4 @@ class _ViewContactState extends State<ViewContact> {
       )),
     );
   }
-}
-
-class Todo {
-  final String id;
-  Todo(this.id);
 }
