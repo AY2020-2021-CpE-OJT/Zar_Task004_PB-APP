@@ -24,13 +24,12 @@ Future<Contacts> createContact(
 }
 
 Future<Contacts> deleteContact(String id) async {
-  Uri url = Uri.http('firstappdeployment.herokuapp.com', '/router/delete/:id');
+  Uri url = Uri.http('firstappdeployment.herokuapp.com', '/router/delete/$id');
   final res = await http.delete(url, headers: <String, String>{
     'Content-Type': 'application/json; charset=UTF-8',
   });
   if (res.statusCode == 200) {
-    final String resposeString = res.body;
-    return Contacts.fromJson(jsonDecode(resposeString));
+    return Contacts.fromJson(jsonDecode(res.body));
   } else {
     throw Exception('Failed to create Contact.');
   }
