@@ -2,13 +2,14 @@ import 'dart:math' as math;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobileapp/API.dart';
+import 'package:flutter_mobileapp/Contact/editContact.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './Model/data_model.dart';
 import './Contact/newContact.dart';
-import './Contact/searchList.dart';
 import 'API.dart';
-import 'Dialogue.dart';
+import 'Auth/token.dart';
+import 'Contact/editContact.dart';
 
 class ViewContact extends StatefulWidget {
   @override
@@ -20,22 +21,15 @@ Random random = new Random();
 int limit = random.nextInt(10);
 
 class _ViewContactState extends State<ViewContact> {
-  Dialogue dialogs = new Dialogue();
   late Future<Contacts> futureContacts;
   List contacts = [];
   bool isLoading = false;
 
-  @override
-  void initState() {
-    super.initState();
-    this.fetchUser();
-  }
-
+  
   fetchUser() async {
     Uri url = Uri.http('firstappdeployment.herokuapp.com', '/router/get');
     http.Response res = await http.get(url, headers: {
-      "Accept": "application/json",
-      "Access-Control-Allow-Origin": "*"
+      'Authorization': 'Bearer $token'
     });
 
     if (res.statusCode == 200) {
@@ -50,36 +44,41 @@ class _ViewContactState extends State<ViewContact> {
       });
     }
   }
+  @override
+    void initState() {
+      super.initState();
+      
+      setState(() {
+        fetchUser();
+      });
+    
+    }
 
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        centerTitle: true,
         toolbarHeight: 50,
-        backgroundColor: Colors.brown.shade400,
-        title: Text("Contact List",
+        backgroundColor: Colors.redAccent.shade100,
+        title: Center(child: Text("Contact List",
             style: TextStyle(fontSize: 20, color: Colors.white)),
-        // actions: [
-        //   FlatButton(child: Icon(Icons.search), onPressed: () {
-        //     Navigator.push(context, MaterialPageRoute(builder: (context) => SearchList()));
-        //   }),
-        // ],
-      ),
+      )),
       body: RefreshIndicator(
         onRefresh: refreshList,
         key: keyRefresh,
         child: getBody(),
       ),
-      backgroundColor: Colors.orange.shade50,
+      backgroundColor: Colors.grey,
       floatingActionButton: new FloatingActionButton(
           child: Icon(Icons.person_add),
-          backgroundColor: Colors.brown.shade400,
+          backgroundColor: Colors.black,
           onPressed: () {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => NewContact()),
             );
           }),
-    );
+      );
   }
 
   Future<void> refreshList() async {
@@ -104,6 +103,15 @@ class _ViewContactState extends State<ViewContact> {
         });
   }
 
+  Widget deleteBackGround() {
+    return Container(
+      alignment: Alignment.centerRight,
+      padding: EdgeInsets.only(right:20),
+      color: Colors.red,
+      child: Icon(Icons.delete, color: Colors.white),
+    );
+  }
+  
   Widget getCard(item) {
     String firstname = item["firstname"].substring(0, 1).toUpperCase() +
         item["firstname"].substring(1).toLowerCase();
@@ -119,48 +127,68 @@ class _ViewContactState extends State<ViewContact> {
 
     String id = item["_id"];
     final nums = item['phonenumbers'];
-
-    // void _delete() {
-    //   setState(() {
-    //     deleteContact(id.toString());
-    //   });
-    // }
+    
+     
+    showSnackbar() {
+      final toast = SnackBar( content: Text(firstname + " " + lastname +  " deleted", style: TextStyle(fontSize: 17, color: Colors.red)),
+                    backgroundColor: Colors.black);
+                  ScaffoldMessenger.of(context).showSnackBar(toast);
+    }
+    showSnackbar2() {
+      final toast = SnackBar( content: Text("Delete cancelled ", style: TextStyle(fontSize: 17, color: Colors.black)),
+                    backgroundColor: Colors.redAccent.shade100);
+                  ScaffoldMessenger.of(context).showSnackBar(toast);
+    }
 
     return Dismissible(
       key: UniqueKey(),
       onDismissed: (direction) {
-        dialogs.information(context, "Are you sure you want to delete?");
-        //deleteContact(id.toString());
-      
-        information (BuildContext context, String message) {
-        return showDialog(
-          context: context,
-          barrierDismissible: true,
-          builder: (BuildContext context) {
-            return AlertDialog(
-              title: Text(message),
-              actions: <Widget>[
-                FlatButton(
-                  onPressed: () {
-                    Navigator.pop(context);
-                    contacts.removeAt(item["_id"]);
-                    deleteContact(item["_id"].toString());
-                  },
-                  child: Text("Yes"),
-                ),
-                FlatButton(
-                    onPressed: () => Navigator.pop(context), child: Text("No"))
-              ],
+        
+        information(BuildContext context, String message) {
+          return showDialog(
+            context: context,
+            barrierDismissible: true,
+            builder: (BuildContext context) {
+              return AlertDialog(
+                backgroundColor: Colors.white,
+                title: Text(message),
+                actions: <Widget>[
+                  TextButton(
+                    onPressed: () {
+                      Navigator.pop(context);
+                      deleteContact(id.toString());
+                      refreshList();
+                      showSnackbar();
+                    },
+                    child: Text("Yes", style: TextStyle(color: Colors.red, fontSize: 20)),
+                  ),
+                  TextButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                        refreshList();
+                        showSnackbar2();
+                      },
+                      child: Text("No", style: TextStyle(color: Colors.red, fontSize: 20))
+                  ),
+                ],
+              );
+            },
+        );
+      }
+      information(context, "Are you sure you want to delete?");
+    },
+      background: deleteBackGround(),
+      child: Card(
+        color: Colors.white,
+          child: Padding(
+        padding: const EdgeInsets.all(5),
+        child: ListTile(
+          onTap: ()  {
+           Navigator.of(context).push(MaterialPageRoute(
+              builder: (BuildContext context) => EditContact(passid: id, pfirstname: firstname, plastname: lastname, phonenum: nums),
+              ),
             );
           },
-        );
-       }
-    },
-      child: Card(
-        color: Colors.red[200],
-          child: Padding(
-        padding: const EdgeInsets.all(10.0),
-        child: ListTile(
             leading: CircleAvatar(
               child: Text(
                 initalsName,
@@ -194,31 +222,6 @@ class _ViewContactState extends State<ViewContact> {
               ],
             )),
       )),
-    );
-    
-  }
-}
-class Dialogue {
-  information(BuildContext context, String message) {
-    return showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text(message),
-          actions: <Widget>[
-            FlatButton(
-              onPressed: () {
-                Navigator.pop(context);
-                deleteContact("_id".toString());
-              },
-              child: Text("Yes"),
-            ),
-            FlatButton(
-                onPressed: () => Navigator.pop(context), child: Text("No"))
-          ],
-        );
-      },
     );
   }
 }
