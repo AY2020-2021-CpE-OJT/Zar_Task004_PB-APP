@@ -10,6 +10,7 @@ import './Contact/newContact.dart';
 import 'API.dart';
 import 'Auth/token.dart';
 import 'Contact/editContact.dart';
+import './Contact/displayContact.dart';
 
 class ViewContact extends StatefulWidget {
   @override
@@ -58,17 +59,17 @@ class _ViewContactState extends State<ViewContact> {
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        toolbarHeight: 50,
         backgroundColor: Colors.redAccent.shade100,
-        title: Center(child: Text("Contact List",
+        leading: Center(),
+        title:Text("Contact List",
             style: TextStyle(fontSize: 20, color: Colors.white)),
-      )),
+      ),
       body: RefreshIndicator(
         onRefresh: refreshList,
         key: keyRefresh,
         child: getBody(),
       ),
-      backgroundColor: Colors.grey,
+      backgroundColor: Colors.blue[50],
       floatingActionButton: new FloatingActionButton(
           child: Icon(Icons.person_add),
           backgroundColor: Colors.black,
@@ -111,23 +112,14 @@ class _ViewContactState extends State<ViewContact> {
       child: Icon(Icons.delete, color: Colors.white),
     );
   }
-  
+
   Widget getCard(item) {
-    String firstname = item["firstname"].substring(0, 1).toUpperCase() +
-        item["firstname"].substring(1).toLowerCase();
-
-    Color color =
-        Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
-
-    String lastname = item["lastname"].substring(0, 1).toUpperCase() +
-        item["lastname"].substring(1).toLowerCase();
-
-    var initalsName = item['firstname'].substring(0, 1).toUpperCase() +
-        item['lastname'].substring(0, 1).toUpperCase();
-
+    String firstname = item["firstname"].substring(0, 1).toUpperCase() + item["firstname"].substring(1).toLowerCase();
+    Color color = Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
+    String lastname = item["lastname"].substring(0, 1).toUpperCase() + item["lastname"].substring(1).toLowerCase();
+    var initalsName = item['firstname'].substring(0, 1).toUpperCase() + item['lastname'].substring(0, 1).toUpperCase();
     String id = item["_id"];
-    final nums = item['phonenumbers'];
-    
+    List<dynamic> list =item["phonenumbers"];
      
     showSnackbar() {
       final toast = SnackBar( content: Text(firstname + " " + lastname +  " deleted", style: TextStyle(fontSize: 17, color: Colors.red)),
@@ -139,88 +131,88 @@ class _ViewContactState extends State<ViewContact> {
                     backgroundColor: Colors.redAccent.shade100);
                   ScaffoldMessenger.of(context).showSnackBar(toast);
     }
-
-    return Dismissible(
-      key: UniqueKey(),
-      onDismissed: (direction) {
-        
-        information(BuildContext context, String message) {
-          return showDialog(
-            context: context,
-            barrierDismissible: true,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                backgroundColor: Colors.white,
-                title: Text(message),
-                actions: <Widget>[
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                      deleteContact(id.toString());
-                      refreshList();
-                      showSnackbar();
-                    },
-                    child: Text("Yes", style: TextStyle(color: Colors.red, fontSize: 20)),
-                  ),
-                  TextButton(
+    
+        return Dismissible(
+          key: UniqueKey(),
+          onDismissed: (direction) {
+          information(BuildContext context, String message) {
+            return showDialog(
+              context: context,
+              barrierDismissible: true,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: Colors.white,
+                  title: Text(message),
+                  actions: <Widget>[
+                    TextButton(
                       onPressed: () {
                         Navigator.pop(context);
+                        deleteContact(id.toString());
                         refreshList();
-                        showSnackbar2();
+                        showSnackbar();
                       },
-                      child: Text("No", style: TextStyle(color: Colors.red, fontSize: 20))
-                  ),
-                ],
+                      child: Text("Yes", style: TextStyle(color: Colors.red, fontSize: 20)),
+                    ),
+                    TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                          refreshList();
+                          showSnackbar2();
+                        },
+                    child: Text("No", style: TextStyle(color: Colors.red, fontSize: 20))
+                    ),
+                  ],
+                );
+              },
+            );
+          }
+          information(context, "Are you sure you want to delete?");
+        },
+          background: deleteBackGround(),
+          child: Card(
+          color: Colors.blue[50],
+            child: Padding(
+          padding: const EdgeInsets.all(8),
+          child: ListTile(
+            onTap: ()  {
+              Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => Display(firstnames: firstname, lastnames: lastname, phonenum: list),
+                ),
               );
             },
-        );
-      }
-      information(context, "Are you sure you want to delete?");
-    },
-      background: deleteBackGround(),
-      child: Card(
-        color: Colors.white,
-          child: Padding(
-        padding: const EdgeInsets.all(5),
-        child: ListTile(
-          onTap: ()  {
-           Navigator.of(context).push(MaterialPageRoute(
-              builder: (BuildContext context) => EditContact(passid: id, pfirstname: firstname, plastname: lastname, phonenum: nums),
+            // EditContact(passid: id, pfirstname: firstname, plastname: lastname, phonenum: item["phonenumbers"])
+              leading: CircleAvatar(
+                child: Text(
+                  initalsName,
+                  style: TextStyle(color: Colors.black, fontSize: 20),
+                ),
+                backgroundColor: color,
+                radius: 35.0,
               ),
-            );
-          },
-            leading: CircleAvatar(
-              child: Text(
-                initalsName,
-                style: TextStyle(color: Colors.black, fontSize: 20),
-              ),
-              backgroundColor: color,
-              radius: 35.0,
-            ),
-            title: Row(
-              children: <Widget>[
-                Column(children: <Widget>[
-                  Container(
-                    padding: EdgeInsets.only(top: 15),
-                    child: Text(
-                      firstname + " " + lastname,
-                      style: TextStyle(fontSize: 17, color: Colors.black),
+              title: Row(
+                children: <Widget>[
+                  Column(children: <Widget>[
+                    Container(
+                      padding: EdgeInsets.only(top: 15),
+                      child: Text(
+                        firstname + " " + lastname,
+                        style: TextStyle(fontSize: 17, color: Colors.black87),
+                      ),
+                      width: 200,
+                      height: 35,
                     ),
-                    width: 200,
-                    height: 35,
-                  ),
-                  SizedBox(height: 10),
-                  Container(
-                    padding: EdgeInsets.only(top: 2),
-                    child: Text(
-                      "Contact #: \n" + nums.toString() + "\n",
-                      style: TextStyle(fontSize: 12.5, color: Colors.blueGrey),
-                    ),
-                    width: 200,
-                  ),
-                ]),
-              ],
-            )),
+                    SizedBox(height: 10),   
+                    Container(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Text(
+                        list.toString().replaceAll('[', '✆ ').replaceAll(']','').replaceAll(',', '\n✆').replaceAll(',', '\n'),
+                        style: TextStyle(color: Colors.blue, fontSize: 13),
+                      ),
+                  width: 200,
+                ),
+              ]),
+            ].toList(),
+        )),
       )),
     );
   }
