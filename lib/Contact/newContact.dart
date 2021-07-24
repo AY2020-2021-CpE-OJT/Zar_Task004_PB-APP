@@ -64,8 +64,17 @@ class _NewContactState extends State<NewContact> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("New Contact", style: TextStyle(color: Colors.black, fontSize: 20)),
+        leading: TextButton(
+          child: Icon(Icons.arrow_back),
+          onPressed: () {
+             Navigator.of(context).push(MaterialPageRoute(
+                builder: (BuildContext context) => ViewContact(),
+                ),
+              );
+          },
+        ),
         backgroundColor: Colors.redAccent.shade100),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.blue[50],
         floatingActionButton: new RaisedButton(
           color: Colors.redAccent.shade100,
           onPressed: () {
@@ -86,7 +95,7 @@ class _NewContactState extends State<NewContact> {
               image: AssetImage('lib/Contact/add-user-icon-6-removebg-preview.png'),
             ),
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.blue[50],
           radius: 90,
         ),
         SizedBox(height: 10),
