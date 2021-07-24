@@ -2,7 +2,7 @@ class Contacts {
   final int? id;
   final String lastname;
   final String firstname;
-  final String phonenumbers;
+  final phonenumbers;
 
   Contacts(
       {required this.id,
