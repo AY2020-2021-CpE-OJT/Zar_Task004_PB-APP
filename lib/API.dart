@@ -1,6 +1,5 @@
 
 import 'package:http/http.dart' as http;
-import 'package:http/http.dart';
 import 'dart:convert';
 import './Model/data_model.dart';
 import 'Auth/token.dart';
@@ -45,6 +44,7 @@ Future<Contacts> editContact(String id, String firstname, String lastname, List<
   
   final res = await http.put(url,
       headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
         'Authorization' : 'Bearer $token'
       },
       body: jsonEncode(<dynamic, dynamic>{
