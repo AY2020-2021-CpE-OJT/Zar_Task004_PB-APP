@@ -7,6 +7,7 @@ import 'package:http/http.dart';
 import '../API.dart';
 import 'package:http/http.dart' as http;
 import '../Auth/token.dart';
+import './newContact.dart';
 
 class EditContact extends StatefulWidget {
   final String passid,pfirstname,plastname;
@@ -20,65 +21,36 @@ class EditContact extends StatefulWidget {
 }
 
 class _EditContactState extends State<EditContact> {
+ 
   
   TextEditingController editfname = TextEditingController();
   TextEditingController editlname = TextEditingController();
-  List<TextEditingController> editphonenum = <TextEditingController>[ TextEditingController()];
+  List<TextEditingController> editphonenum = <TextEditingController>[TextEditingController()];
   Future<Contacts>? _futureContacts;
   final List<Todo> _list = <Todo>[];
-  List<String> phonenum = <String>[];
+
   int _num = 0;
-
-  String fname = "";
-  String lname = "";
-  List<dynamic> pnum = [];
-
-
-
-
+ 
   @override
   void initState() {
     super.initState();
-    
+      
+
       editfname = TextEditingController(text: widget.pfirstname);
       editlname = TextEditingController(text: widget.plastname);
-      editphonenum = <TextEditingController>[TextEditingController(text: widget.phonenum[_num])];  
-    
+      editphonenum = <TextEditingController>[TextEditingController()];      
   }
 
 
-  void updateContact (String id, String fname, String lname, List<dynamic> pnum) async {
-     fname = editfname.text;
-     lname = editlname.text;
-     pnum = editphonenum;
-    Uri url = Uri.http('firstappdeployment.herokuapp.com', '/router/edit/$id');
-  
-  final res = await http.put(url,
-      headers: <String, String>{
-        'Authorization' : 'Bearer $token'
-      },
-      body: {
-        'firstname': fname,
-        'lastname': lname,
-        'phonenumbers': pnum,
-      });
-
-    if (res.statusCode == 200) {
-      List items = jsonDecode(res.body);
-      print(items);
-    }
-      Navigator.pop(context);
-  }
-
-  
   void addContact() {
+    List<String> phonenum = <String>[];
     
     for (int i = 0; i < _num; i++) {
       phonenum.add(editphonenum[i].text);
     }
     setState(() {
     _list.insert(0, Todo(editlname.text, editfname.text, phonenum));
-    updateContact("${widget.passid}", editfname.text, editlname.text, phonenum);
+    _futureContacts = editContact(widget.passid, editfname.text, editlname.text, phonenum);
     });
                   
     for (int i = 0; i < _num; i++) {
@@ -98,13 +70,17 @@ class _EditContactState extends State<EditContact> {
   void add() {
     setState(() {
        _num++;
-      editphonenum.insert(0, TextEditingController());
+      // editphonenum.insert(0, TextEditingController());
+      editphonenum = <TextEditingController>[TextEditingController()];
     });
   }
 
 
   @override
   Widget build(BuildContext context) {
+    List nums = widget.phonenum;
+    nums.getRange(0, widget.phonenum.length);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -120,11 +96,8 @@ class _EditContactState extends State<EditContact> {
                     backgroundColor: Colors.black);
                   ScaffoldMessenger.of(context).showSnackBar(toast);
                 } else {       
-                  setState(() {
-                    editContact(widget.passid, editfname.text, editlname.text, editphonenum);  
-                  });
-                             
-                    print(widget.passid);
+                  addContact();
+                  print(nums);
                 }
           },
       child: Text("SAVE", style: TextStyle(color: Colors.black, fontSize: 20))),
@@ -146,12 +119,11 @@ class _EditContactState extends State<EditContact> {
           itemBuilder: (context, i) {
             return ListTile(
               title: TextField(
-                  controller: editlname,
+                  controller: editfname,
                   decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(20),
                   icon: Icon(Icons.person),
-                  border: OutlineInputBorder(),
-                  hintText: widget.pfirstname),
+                  border: OutlineInputBorder()),
                 keyboardType: TextInputType.name,
               ),
             );
@@ -160,16 +132,16 @@ class _EditContactState extends State<EditContact> {
         )),
         Flexible(
             child: ListView.builder(
+         
           shrinkWrap: true,
           itemBuilder: (context, i) {
             return ListTile(
               title: TextField(
-                controller: editfname,
+                controller: editlname,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(20),
                   icon: SizedBox(width: 24),
-                  border: OutlineInputBorder(),
-                  hintText: widget.plastname),
+                  border: OutlineInputBorder()),
                 keyboardType: TextInputType.name,
               ),
             );
@@ -178,6 +150,7 @@ class _EditContactState extends State<EditContact> {
         )),
         Flexible(
             child: ListView.builder(
+          
           shrinkWrap: true,
           itemBuilder: (context, i) {
             return ListTile(
@@ -185,14 +158,13 @@ class _EditContactState extends State<EditContact> {
                 controller: editphonenum[i],
                 decoration: InputDecoration(
                     icon: Icon(Icons.phone),
-                    border: OutlineInputBorder(),
-                    hintText: widget.phonenum[i]),
+                    border: OutlineInputBorder()),
                 maxLength: 11,
                 keyboardType: TextInputType.number,
               ),
             );
           },
-          itemCount: widget.phonenum.length,
+          itemCount: _num,
         )),
         SizedBox(height: 30),
         TextButton(
@@ -204,12 +176,4 @@ class _EditContactState extends State<EditContact> {
       ]),
     );
   }
-}
-
-class Todo {
-  final String last_name;
-  final String first_name;
-  final List<String> phone_numbers;
-
-  Todo(this.last_name, this.first_name, this.phone_numbers);
 }
