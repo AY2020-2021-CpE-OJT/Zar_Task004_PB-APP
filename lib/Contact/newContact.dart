@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobileapp/ContactList.dart';
 import 'package:flutter_mobileapp/Model/data_model.dart';
@@ -34,28 +33,33 @@ class _NewContactState extends State<NewContact> {
       _list.insert(0, Todo(_lastname.text, _firstname.text, phonenum));
       _futureContacts = createContact(_lastname.text, _firstname.text, phonenum);
     });
-
+    _lastname.clear();
+    _firstname.clear();
     for (int i = 0; i < _num; i++) {
-      _lastname.clear();
-      _firstname.clear();
+      
       _phonenumbers[i].clear();
       }
 
     final toast = SnackBar(
       content: Text("Succesfuly added",
           style: TextStyle(fontSize: 17, color: Colors.white)),
-      backgroundColor: Colors.green,
+      backgroundColor: Colors.blue[40],
     );
     ScaffoldMessenger.of(context).showSnackBar(toast);
   }
 
-  void add() {
+  void addphone() {
     setState(() {
       _num++;
       _phonenumbers.insert(0, TextEditingController());
     });
   }
-
+  void subtractphone() {
+    setState(() {
+      _num--;
+      _phonenumbers.insert(0, TextEditingController());
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -64,8 +68,8 @@ class _NewContactState extends State<NewContact> {
       appBar: AppBar(
         centerTitle: true,
         title: Text("New Contact", style: TextStyle(color: Colors.black, fontSize: 20)),
-        leading: TextButton(
-          child: Icon(Icons.arrow_back),
+        leading: TextButton(   
+          child: Icon(Icons.list, color: Colors.black, size: 35,),
           onPressed: () {
              Navigator.of(context).push(MaterialPageRoute(
                 builder: (BuildContext context) => ViewContact(),
@@ -73,6 +77,7 @@ class _NewContactState extends State<NewContact> {
               );
           },
         ),
+        leadingWidth: 50,
         backgroundColor: Colors.redAccent.shade100),
         backgroundColor: Colors.blue[50],
         floatingActionButton: new RaisedButton(
@@ -92,11 +97,11 @@ class _NewContactState extends State<NewContact> {
           child: FittedBox(
             fit: BoxFit.cover,
             child: Image(
-              image: AssetImage('lib/Contact/add-user-icon-6-removebg-preview.png'),
+              image: AssetImage('lib/Contact/user.png'),
             ),
           ),
           backgroundColor: Colors.blue[50],
-          radius: 90,
+          radius: 70,
         ),
         SizedBox(height: 10),
         Flexible(
@@ -108,7 +113,7 @@ class _NewContactState extends State<NewContact> {
                 controller: _lastname,
                 decoration: InputDecoration(
                   contentPadding: const EdgeInsets.all(20),
-                  icon: Icon(Icons.person),
+                  icon: Icon(Icons.person, color: Colors.black),
                   border: OutlineInputBorder(),
                   labelText: "Firstname"),
                 keyboardType: TextInputType.name,
@@ -117,6 +122,7 @@ class _NewContactState extends State<NewContact> {
           },
           itemCount: 1,
         )),
+        SizedBox(height: 5),
         Flexible(
             child: ListView.builder(
           shrinkWrap: true,
@@ -135,6 +141,7 @@ class _NewContactState extends State<NewContact> {
           },
           itemCount: 1,
         )),
+        SizedBox(height: 20),
         Flexible(
             child: ListView.builder(
           shrinkWrap: true,
@@ -143,9 +150,13 @@ class _NewContactState extends State<NewContact> {
               title: TextField(
                 controller: _phonenumbers[i],
                 decoration: InputDecoration(
-                    icon: Icon(Icons.phone),
-                    border: OutlineInputBorder(),
-                    labelText: "Phone number"),
+                  icon: Icon(Icons.phone_android),
+                  border: UnderlineInputBorder(),
+                  suffixIcon: IconButton(
+                    onPressed: subtractphone,
+                    icon: Text("-", style: TextStyle(fontSize: 50, height: 0.75, color: Colors.red)),
+                  )
+                  ),
                 maxLength: 11,
                 keyboardType: TextInputType.number,
               ),
@@ -153,11 +164,10 @@ class _NewContactState extends State<NewContact> {
           },
           itemCount: _num,
         )),
-        SizedBox(height: 30),
         TextButton(
-          onPressed: add,
+          onPressed: addphone,
           child: Text( 
-          " ➕ Add Phone Number",
+          " ➕ add phone",
           style: TextStyle(fontSize: 15, color: Colors.black), 
         )),
       ]),
