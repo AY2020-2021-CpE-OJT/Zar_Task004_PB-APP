@@ -2,14 +2,12 @@ import 'dart:math' as math;
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobileapp/API.dart';
-import 'package:flutter_mobileapp/Contact/editContact.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import './Model/data_model.dart';
 import './Contact/newContact.dart';
 import 'API.dart';
 import 'Auth/token.dart';
-import 'Contact/editContact.dart';
 import './Contact/displayContact.dart';
 
 class ViewContact extends StatefulWidget {
@@ -17,7 +15,7 @@ class ViewContact extends StatefulWidget {
   _ViewContactState createState() => _ViewContactState();
 }
 
-var keyRefresh = GlobalKey<RefreshIndicatorState>();
+
 Random random = new Random();
 int limit = random.nextInt(10);
 
@@ -25,6 +23,7 @@ class _ViewContactState extends State<ViewContact> {
   late Future<Contacts> futureContacts;
   List contacts = [];
   bool isLoading = false;
+  var keyRefresh = GlobalKey<RefreshIndicatorState>();
 
   
   fetchUser() async {
@@ -61,12 +60,12 @@ class _ViewContactState extends State<ViewContact> {
         centerTitle: true,
         backgroundColor: Colors.redAccent.shade100,
         leading: Center(),
-        title:Text("Contact List",
-            style: TextStyle(fontSize: 20, color: Colors.white)),
+        title:Text("Contacts",
+            style: TextStyle(fontSize: 20, color: Colors.black)),
       ),
       body: RefreshIndicator(
-        onRefresh: refreshList,
         key: keyRefresh,
+        onRefresh: refreshList,
         child: getBody(),
       ),
       backgroundColor: Colors.blue[50],
@@ -94,8 +93,7 @@ class _ViewContactState extends State<ViewContact> {
     Center(child: Icon(Icons.add));
     if (contacts.contains(null) || contacts.length <= 0 || isLoading) {
       return Center(
-          child: Text("Empty",
-              style: TextStyle(fontSize: 20, color: Colors.black)));
+          child: CircularProgressIndicator());
     }
     return ListView.builder(
         itemCount: contacts.length,
@@ -131,7 +129,6 @@ class _ViewContactState extends State<ViewContact> {
                     backgroundColor: Colors.redAccent.shade100);
                   ScaffoldMessenger.of(context).showSnackBar(toast);
     }
-    
         return Dismissible(
           key: UniqueKey(),
           onDismissed: (direction) {
@@ -172,44 +169,35 @@ class _ViewContactState extends State<ViewContact> {
           child: Card(
           color: Colors.blue[50],
             child: Padding(
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(0),
           child: ListTile(
             onTap: ()  {
               Navigator.of(context).push(MaterialPageRoute(
-                builder: (BuildContext context) => Display(firstnames: firstname, lastnames: lastname, phonenum: list),
+                builder: (BuildContext context) => Display(id: id, firstnames: firstname, lastnames: lastname, phonenum: list),
                 ),
               );
             },
-            // EditContact(passid: id, pfirstname: firstname, plastname: lastname, phonenum: item["phonenumbers"])
-              leading: CircleAvatar(
-                child: Text(
-                  initalsName,
-                  style: TextStyle(color: Colors.black, fontSize: 20),
-                ),
-                backgroundColor: color,
-                radius: 35.0,
+            leading: CircleAvatar(
+              child: Text(
+                initalsName,
+                style: TextStyle(color: Colors.black, fontSize: 13),
               ),
-              title: Row(
-                children: <Widget>[
-                  Column(children: <Widget>[
-                    Container(
-                      padding: EdgeInsets.only(top: 15),
-                      child: Text(
-                        firstname + " " + lastname,
-                        style: TextStyle(fontSize: 17, color: Colors.black87),
-                      ),
-                      width: 200,
-                      height: 35,
+              backgroundColor: color,
+              radius: 15.0,
+            ),
+            title: Row(
+              children: <Widget>[
+                Column(children: <Widget>[
+                  Container(
+                    padding: EdgeInsets.only(top: 15),
+                    child: Text(
+                      firstname + " " + lastname,
+                      style: TextStyle(fontSize: 17, color: Colors.black87),
                     ),
-                    SizedBox(height: 10),   
-                    Container(
-                      padding: EdgeInsets.only(top: 2),
-                      child: Text(
-                        list.toString().replaceAll('[', '✆ ').replaceAll(']','').replaceAll(',', '\n✆').replaceAll(',', '\n'),
-                        style: TextStyle(color: Colors.blue, fontSize: 13),
-                      ),
-                  width: 200,
-                ),
+                    width: 200,
+                    height: 35,
+                  ),
+                  SizedBox(height: 10),   
               ]),
             ].toList(),
         )),
