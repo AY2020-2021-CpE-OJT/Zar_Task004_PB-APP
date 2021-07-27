@@ -1,10 +1,6 @@
-import 'dart:ffi';
-
 import 'package:flutter/material.dart';
 import '../Contact/editContact.dart';
 import '../ContactList.dart';
-
-
 
 class Display extends StatefulWidget {
   final String id, firstnames, lastnames;
@@ -16,53 +12,43 @@ class Display extends StatefulWidget {
 }
 
 
+
 class _DisplayState extends State<Display> {
+   @override
 
-
-  // Widget align1() {
-  //   return Align(
-  //     alignment: Alignment.centerLeft,
-  //     widthFactor: 200,
-  //     child: Text("     Firstname: " + " \n          " + widget.firstnames + "\n\n" + "     Lastname: " + " \n          " + 
-  //     widget.lastnames + "\n\n      Phone numbers: \n          " + widget.phonenum.toString().replaceAll('[', '✆ ')
-  //     .replaceAll(']','').replaceAll(',', '\n          ✆')
-  //     .replaceAll(',', '\n'), 
-  //     style: TextStyle(fontSize: 20, fontStyle: FontStyle.italic, fontWeight: FontWeight.w300,)),
-  //   );
-  // }
    Widget align1() {
     return Align(
       alignment: Alignment.centerLeft,
       widthFactor: 200,
-      child: Text("\n      Firstname: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400,),),
+      child: Text("\n      Firstname: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400),),
     );
   }
   Widget align2() {
     return Align(
       alignment: Alignment.centerLeft,
       widthFactor: 200,
-      child: Text("         " + widget.firstnames, style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.orangeAccent.shade700),),
+      child: Text("         " + widget.firstnames, style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.orangeAccent.shade700)),
     );
   }
   Widget align3() {
     return Align(
       alignment: Alignment.centerLeft,
       widthFactor: 200,
-      child: Text("\n      Lastname: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400,),),
+      child: Text("\n      Lastname: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400),),
     );
   }
   Widget align4() {
     return Align(
       alignment: Alignment.centerLeft,
       widthFactor: 200,
-      child: Text("         " + widget.lastnames, style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.orangeAccent.shade700),),
+      child: Text("         " + widget.lastnames, style: TextStyle(fontSize: 25, fontStyle: FontStyle.italic, fontWeight: FontWeight.bold, color: Colors.orangeAccent.shade700)),
     );
   }
   Widget align5() {
     return Align(
       alignment: Alignment.centerLeft,
       widthFactor: 200,
-      child: Text("\n      Phone Numbers: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400,),),
+      child: Text("\n      Phone Numbers: ", style: TextStyle(fontSize: 23, fontStyle: FontStyle.italic, fontWeight: FontWeight.w400)),
     );
   }
   Widget align6() {
