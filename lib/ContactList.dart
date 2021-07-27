@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobileapp/API.dart';
 import 'package:http/http.dart' as http;
+import 'package:toast/toast.dart';
 import 'dart:convert';
 import './Model/data_model.dart';
 import './Contact/newContact.dart';
@@ -47,12 +48,10 @@ class _ViewContactState extends State<ViewContact> {
   @override
     void initState() {
       super.initState();
-      
       setState(() {
         fetchUser();
       });
-    
-    }
+  }
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -80,6 +79,8 @@ class _ViewContactState extends State<ViewContact> {
           }),
       );
   }
+
+ 
 
   Future<void> refreshList() async {
     keyRefresh.currentState?.show(atTop: true);
@@ -110,7 +111,24 @@ class _ViewContactState extends State<ViewContact> {
       child: Icon(Icons.delete, color: Colors.white),
     );
   }
-
+  //  _searchBar() {
+  //   return Padding(
+  //     padding: const EdgeInsets.all(8.0),
+  //     child: TextField(
+  //       decoration: InputDecoration(
+  //         hintText: 'Search....'
+  //       ),
+  //       // onChanged: (text) {
+  //       //   text = text.toLowerCase();
+  //       //   item = item.where((item) {
+  //       //     var notetitle = item["firstname"].toLowerCase();
+  //       //     return notetitle.contains(text);
+  //       //   });
+          
+  //       // },
+  //     ),
+  //   );
+  // }
   Widget getCard(item) {
     String firstname = item["firstname"].substring(0, 1).toUpperCase() + item["firstname"].substring(1).toLowerCase();
     Color color = Color((math.Random().nextDouble() * 0xFFFFFF).toInt()).withOpacity(1.0);
@@ -118,16 +136,11 @@ class _ViewContactState extends State<ViewContact> {
     var initalsName = item['firstname'].substring(0, 1).toUpperCase() + item['lastname'].substring(0, 1).toUpperCase();
     String id = item["_id"];
     List<dynamic> list =item["phonenumbers"];
+    
      
     showSnackbar() {
-      final toast = SnackBar( content: Text(firstname + " " + lastname +  " deleted", style: TextStyle(fontSize: 17, color: Colors.red)),
-                    backgroundColor: Colors.black);
-                  ScaffoldMessenger.of(context).showSnackBar(toast);
-    }
-    showSnackbar2() {
-      final toast = SnackBar( content: Text("Delete cancelled ", style: TextStyle(fontSize: 17, color: Colors.black)),
-                    backgroundColor: Colors.redAccent.shade100);
-                  ScaffoldMessenger.of(context).showSnackBar(toast);
+      String x = firstname + " " + lastname +  " deleted";
+      Toast.show(x, context, duration: Toast.LENGTH_SHORT, gravity:  Toast.BOTTOM, backgroundColor: Colors.grey, textColor: Colors.black);
     }
         return Dismissible(
           key: UniqueKey(),
@@ -154,7 +167,6 @@ class _ViewContactState extends State<ViewContact> {
                         onPressed: () {
                           Navigator.pop(context);
                           refreshList();
-                          showSnackbar2();
                         },
                     child: Text("No", style: TextStyle(color: Colors.red, fontSize: 20))
                     ),
