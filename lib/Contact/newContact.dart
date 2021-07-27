@@ -17,12 +17,9 @@ class _NewContactState extends State<NewContact> {
   List<TextEditingController> _phonenumbers = <TextEditingController>[
     TextEditingController()
   ];
-  final List<Todo> _list = <Todo>[];
 
   int _num = 0;
 
-
-  
   void addContact() {
     List<String> phonenum = <String>[];
 
@@ -30,16 +27,13 @@ class _NewContactState extends State<NewContact> {
       phonenum.add(_phonenumbers[i].text);
     }
     setState(() {
-      _list.insert(0, Todo(_lastname.text, _firstname.text, phonenum));
-      _futureContacts = createContact(_lastname.text, _firstname.text, phonenum);
+      createContact(_lastname.text, _firstname.text, phonenum);
     });
     _lastname.clear();
     _firstname.clear();
     for (int i = 0; i < _num; i++) {
-      
       _phonenumbers[i].clear();
       }
-
     final toast = SnackBar(
       content: Text("Succesfuly added",
           style: TextStyle(fontSize: 17, color: Colors.white)),
@@ -63,7 +57,6 @@ class _NewContactState extends State<NewContact> {
 
   @override
   Widget build(BuildContext context) {
-    
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -93,7 +86,8 @@ class _NewContactState extends State<NewContact> {
           },
       child: Text("SAVE", style: TextStyle(color: Colors.black, fontSize: 20))),
       body: Column(children: [
-        CircleAvatar(
+        Padding(padding: EdgeInsets.all(15),
+        child: CircleAvatar(
           child: FittedBox(
             fit: BoxFit.cover,
             child: Image(
@@ -102,7 +96,7 @@ class _NewContactState extends State<NewContact> {
           ),
           backgroundColor: Colors.blue[50],
           radius: 70,
-        ),
+        )),
         SizedBox(height: 10),
         Flexible(
           child: ListView.builder(
@@ -116,6 +110,7 @@ class _NewContactState extends State<NewContact> {
                   icon: Icon(Icons.person, color: Colors.black),
                   border: OutlineInputBorder(),
                   labelText: "Firstname"),
+                  style: TextStyle(color: Colors.black, fontSize: 17, fontStyle: FontStyle.italic),
                 keyboardType: TextInputType.name,
               ),
             );
@@ -135,6 +130,7 @@ class _NewContactState extends State<NewContact> {
                   icon: SizedBox(width: 24),
                   border: OutlineInputBorder(),
                   labelText: "Lastname"),
+                  style: TextStyle(color: Colors.black, fontSize: 17, fontStyle: FontStyle.italic),
                 keyboardType: TextInputType.name,
               ),
             );
@@ -150,13 +146,13 @@ class _NewContactState extends State<NewContact> {
               title: TextField(
                 controller: _phonenumbers[i],
                 decoration: InputDecoration(
-                  icon: Icon(Icons.phone_android),
+                  icon: Icon(Icons.phone_android, color: Colors.black),
                   border: UnderlineInputBorder(),
                   suffixIcon: IconButton(
                     onPressed: subtractphone,
                     icon: Text("-", style: TextStyle(fontSize: 50, height: 0.75, color: Colors.red)),
-                  )
-                  ),
+                  )), 
+                style: TextStyle(color: Colors.black, fontSize: 17, fontStyle: FontStyle.italic),
                 maxLength: 11,
                 keyboardType: TextInputType.number,
               ),
