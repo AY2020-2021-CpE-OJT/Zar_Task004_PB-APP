@@ -1,2 +1,2 @@
-var token = "";
+var token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7Im1lc3NhZ2UiOiJMb2cgaW4gc3VjY2VzZnVseSEgIn0sImlhdCI6MTYyNjkzMjAwOH0.haawmkINnHC5uTwA-w7Mje0haj59CLEMdJc3k2TcgXs";
 
